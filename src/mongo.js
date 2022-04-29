@@ -11,10 +11,69 @@ const client = new MongoClient(uri, {
 })
 
 async function main() {
-  const c = await client.connect()
+  await client.connect()
+  const users = client.db('fc21').collection('users')
+  const cities = client.db('fc21').collection('cities')
 
-  console.log(c)
-  console.log('OK!')
+  // Reset
+  await users.deleteMany({})
+  await cities.deleteMany({})
+
+  await cities.insertMany([
+    {
+      name: '서울',
+      polulation: 1000,
+    },
+    {
+      name: '부산',
+      polulation: 350,
+    },
+  ])
+
+  await users.insertMany([
+    {
+      name: 'Foo',
+      birthYear: 2000,
+      contacts: [
+        {
+          type: 'phone',
+          number: '+82100001111',
+        },
+        {
+          type: 'home',
+          number: '+820233344444',
+        },
+      ],
+      city: '서울',
+    },
+    {
+      name: 'Bar',
+      birthYear: 1995,
+      contacts: [
+        {
+          type: 'phone',
+        },
+      ],
+      city: '부산',
+    },
+    {
+      name: 'Baz',
+      birthYear: 1990,
+      city: '부산',
+    },
+    {
+      name: 'Poo',
+      birthYear: 1993,
+      city: '서울',
+    },
+  ])
+
+  const cursor = users.find({
+    'contacts.type': 'phone',
+  })
+
+  await cursor.forEach(console.log)
+
   await client.close()
 }
 
