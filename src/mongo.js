@@ -22,11 +22,11 @@ async function main() {
   await cities.insertMany([
     {
       name: '서울',
-      polulation: 1000,
+      population: 1000,
     },
     {
       name: '부산',
-      polulation: 350,
+      population: 350,
     },
   ])
 
@@ -79,9 +79,18 @@ async function main() {
     },
     {
       $match: {
-        'city_info.polulation': {
-          $gte: 500,
-        },
+        $and: [
+          {
+            'city_info.population': {
+              $gte: 500,
+            },
+          },
+          {
+            birthYear: {
+              $gte: 1995,
+            },
+          },
+        ],
       },
     },
   ])
