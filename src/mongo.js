@@ -68,9 +68,23 @@ async function main() {
     },
   ])
 
-  const cursor = users.find({
-    'contacts.type': 'phone',
-  })
+  const cursor = users.aggregate([
+    {
+      $lookup: {
+        from: 'cities',
+        localField: 'city',
+        foreignField: 'name',
+        as: 'city_info',
+      },
+    },
+    {
+      $match: {
+        'city_info.polulation': {
+          $gte: 500,
+        },
+      },
+    },
+  ])
 
   await cursor.forEach(console.log)
 
